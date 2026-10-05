@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1D Free Fall: Kinematics & Concepts</title>
+    
+    <!-- KaTeX for math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <!-- html2canvas for capturing clipboard verification proof -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        /* Clean, modern, unpretentious sans-serif across the entire interface */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 25px 15px;
+            box-sizing: border-box;
+            color: #0f172a;
+            -webkit-font-smoothing: antialiased;
+        }
+        .quiz-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            width: 100%;
+            max-width: 820px;
+            padding: 28px;
+            box-sizing: border-box;
+            border: 1px solid #e2e8f0;
+        }
+        h2 {
+            text-align: center;
+            color: #0f172a;
+            margin-top: 0;
+            margin-bottom: 16px;
+            font-size: 1.55em;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .score-row {
+            display: flex;
+            justify-content: space-around;
+            font-size: 1.05em;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        .correct { color: #16a34a; }
+        .incorrect { color: #dc2626; }
+        
+        .graphic-container {
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 20px 16px 16px 16px;
+            position: relative;
+            background-color: #ffffff;
+            margin-bottom: 18px;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .id-badge {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 11px;
+            color: #94a3b8;
+            font-family: monospace;
+        }
+        .diagram-wrapper {
+            width: 100%;
+            max-width: 520px;
+            height: 175px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        .diagram-wrapper svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .statement-text {
+            font-size: 1.18em;
+            font-weight: 500;
+            color: #1e293b;
+            line-height: 1.55;
+            margin-top: 6px;
+            padding: 0 10px;
+        }
+
+        /* --- Clean Sans-Serif Math Styling with Anchored Vector Arrows --- */
+        .katex {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+        }
+        .katex .mathnormal {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+            font-style: italic;
+        }
+        .katex .mord:not(.accent-body *) {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+        }
+        /* Keep vector arrow glyph in KaTeX_Main and center it directly over the letter without vertical shifting */
+        .katex .accent-body, 
+        .katex .accent-body * {
+            font-family: KaTeX_Main, serif !important;
+        }
+        .katex .accent-body {
+            left: 50% !important;
+            transform: translateX(-50%) scale(0.92);
+            /* Do NOT override 'top' here; KaTeX's parent container manages the exact vertical anchor */
+        }
+        .statement-text .katex {
+            font-size: 1.05em;
+            color: #0f172a;
+        }
+        .btn-choice .katex {
+            font-size: 1.08em;
+            color: #ffffff;
+        }
+        .feedback-banner .katex {
+            font-size: 1.05em;
+        }
+
+        .instruction-banner {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            text-align: center;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-weight: 600;
+            margin-bottom: 16px;
+            border: 1px solid #bae6fd;
+        }
+        .feedback-banner {
+            text-align: left;
+            padding: 14px 18px;
+            border-radius: 8px;
+            font-size: 1em;
+            line-height: 1.55;
+            margin-bottom: 18px;
+            display: none;
+        }
+        .fb-correct {
+            background-color: #dcfce7;
+            color: #14532d;
+            border: 1px solid #86efac;
+        }
+        .fb-incorrect {
+            background-color: #fee2e2;
+            color: #7f1d1d;
+            border: 1px solid #fca5a5;
+        }
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .btn-choice {
+            font-family: inherit;
+            flex: 1;
+            min-width: 180px;
+            padding: 14px 12px;
+            border: none;
+            border-radius: 9px;
+            font-size: 1.05em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        }
+        .btn-choice:nth-child(1) { background-color: #2563eb; }
+        .btn-choice:nth-child(1):hover { background-color: #1d4ed8; }
+        
+        .btn-choice:nth-child(2) { background-color: #7c3aed; }
+        .btn-choice:nth-child(2):hover { background-color: #6d28d9; }
+
+        .btn-choice:nth-child(3) { background-color: #0d9488; }
+        .btn-choice:nth-child(3):hover { background-color: #0f766e; }
+
+        .btn-next {
+            background-color: #16a34a;
+            color: white;
+            display: none;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .btn-next:hover { background-color: #15803d; }
+
+        .copy-section {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px dashed #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-copy {
+            background-color: #475569;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-copy:hover { background-color: #334155; }
+        .copy-hint {
+            font-size: 0.8em;
+            color: #64748b;
+            text-align: center;
+        }
+        .progress-text {
+            text-align: center;
+            font-size: 0.9em;
+            color: #64748b;
+            margin-top: 14px;
+            font-weight: 500;
+        }
+        .completion-box {
+            text-align: center;
+            padding: 24px 12px;
+        }
+        .completion-title {
+            color: #16a34a;
+            font-size: 1.7em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card" id="quiz-card">
+    <h2>1D Free Fall: Kinematics & Concepts</h2>
+    
+    <div class="score-row">
+        <span class="correct">Correct: <span id="correct-count">0</span> / 10 Target</span>
+        <span class="incorrect">Incorrect: <span id="incorrect-count">0</span></span>
+    </div>
+
+    <div class="graphic-container" id="display-card">
+        <span class="id-badge">ID: <span id="sim-id">---------</span></span>
+        <div class="diagram-wrapper" id="svg-diagram"></div>
+        <div id="statement-display" class="statement-text">Loading problem...</div>
+    </div>
+
+    <div id="instruction" class="instruction-banner">Select the best answer.</div>
+
+    <div id="feedback" class="feedback-banner"></div>
+
+    <div class="button-row" id="action-buttons">
+        <button class="btn-choice" id="opt-btn-0" onclick="submitAnswer(0)">Option 1</button>
+        <button class="btn-choice" id="opt-btn-1" onclick="submitAnswer(1)">Option 2</button>
+        <button class="btn-choice" id="opt-btn-2" onclick="submitAnswer(2)">Option 3</button>
+    </div>
+    
+    <div class="button-row" style="margin-top: 12px;">
+        <button id="next-btn" class="btn-next" onclick="loadNextStatement()">Next Question ➔</button>
+    </div>
+
+    <div class="progress-text" id="progress-display">
+        Target: Answer 10 correctly to finish
+    </div>
+
+    <!-- Always-Visible Copy Proof Button Section -->
+    <div class="copy-section" data-html2canvas-ignore="true">
+        <button id="copy-btn" class="btn-copy" onclick="copyProofToClipboard()">📋 Copy Proof to Clipboard</button>
+        <span class="copy-hint">Click anytime to capture your card verification proof to paste (Ctrl+V) into Brightspace.</span>
+    </div>
+</div>
+
+<script>
+    function renderMath() {
+        if (window.renderMathInElement) {
+            renderMathInElement(document.getElementById("quiz-card"), {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError: false
+            });
+        }
+    }
+
+    // Narrow 1D Trajectory Path (40px wide)
+    const narrowPath = `
+        <line x1="80" y1="130" x2="320" y2="130" stroke="#334155" stroke-width="2.5"/>
+        <path d="M 180 130 Q 180 30 200 30 Q 220 30 220 130" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+    `;
+
+    const diagrams = {
+        downward_motion: `
+            <svg viewBox="0 0 400 130">
+                <line x1="175" y1="18" x2="175" y2="58" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                <line x1="188" y1="10" x2="188" y2="52" stroke="#64748b" stroke-width="2.5"/>
+                <line x1="200" y1="5" x2="200" y2="50" stroke="#334155" stroke-width="3"/>
+                <line x1="212" y1="10" x2="212" y2="52" stroke="#64748b" stroke-width="2.5"/>
+                <line x1="225" y1="18" x2="225" y2="58" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                <circle cx="200" cy="78" r="13" fill="#2563eb"/>
+                <path d="M 174 78 C 170 86, 170 92, 174 98" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+                <path d="M 226 78 C 230 86, 230 92, 226 98" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+            </svg>
+        `,
+        toss_launch_land: `
+            <svg viewBox="0 0 400 150">
+                ${narrowPath}
+                <circle cx="180" cy="130" r="5" fill="#2563eb"/>
+                <text x="180" y="148" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">A</text>
+                <circle cx="220" cy="130" r="5" fill="#2563eb"/>
+                <text x="220" y="148" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">B</text>
+            </svg>
+        `,
+        toss_rising: `
+            <svg viewBox="0 0 400 150">
+                ${narrowPath}
+                <circle cx="180" cy="130" r="5" fill="#2563eb"/>
+                <text x="180" y="148" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">A</text>
+                <circle cx="183" cy="78" r="5" fill="#2563eb"/>
+                <text x="166" y="82" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">B</text>
+            </svg>
+        `,
+        toss_falling: `
+            <svg viewBox="0 0 400 150">
+                ${narrowPath}
+                <circle cx="217" cy="78" r="5" fill="#2563eb"/>
+                <text x="234" y="82" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">A</text>
+                <circle cx="220" cy="130" r="5" fill="#2563eb"/>
+                <text x="220" y="148" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">B</text>
+            </svg>
+        `,
+        toss_symmetry: `
+            <svg viewBox="0 0 400 150">
+                ${narrowPath}
+                <line x1="183" y1="78" x2="217" y2="78" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3,3"/>
+                <circle cx="183" cy="78" r="5" fill="#2563eb"/>
+                <text x="166" y="82" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">A</text>
+                <circle cx="217" cy="78" r="5" fill="#2563eb"/>
+                <text x="234" y="82" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">B</text>
+            </svg>
+        `,
+        toss_apex: `
+            <svg viewBox="0 0 400 150">
+                ${narrowPath}
+                <circle cx="180" cy="130" r="5" fill="#2563eb"/>
+                <text x="180" y="148" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">A</text>
+                <circle cx="200" cy="30" r="5" fill="#2563eb"/>
+                <text x="200" y="18" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">B</text>
+            </svg>
+        `,
+        apex_zoom: `
+            <svg viewBox="0 0 400 130">
+                <path d="M 180 90 Q 180 35 200 35 Q 220 35 220 90" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                <circle cx="200" cy="35" r="7" fill="#2563eb"/>
+                <text x="200" y="20" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">Apex</text>
+            </svg>
+        `,
+        toss_loop: `
+            <svg viewBox="0 0 400 150">
+                ${narrowPath}
+                <polygon points="180,68 176,78 184,78" fill="#2563eb"/>
+                <polygon points="220,92 216,82 224,82" fill="#2563eb"/>
+            </svg>
+        `,
+        cliff_drop: `
+            <svg viewBox="0 0 400 150">
+                <path d="M 50 140 L 180 140 L 180 45 L 50 45 Z" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+                <line x1="180" y1="140" x2="350" y2="140" stroke="#334155" stroke-width="2.5"/>
+                <text x="110" y="98" font-size="14" font-weight="600" fill="#475569" text-anchor="middle">Cliff</text>
+                <circle cx="180" cy="45" r="5" fill="#2563eb"/>
+                <line x1="180" y1="55" x2="180" y2="132" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                <circle cx="180" cy="136" r="5" fill="#dc2626"/>
+            </svg>
+        `,
+        cliff_up_down: `
+            <svg viewBox="0 0 400 160">
+                <path d="M 40 145 L 180 145 L 180 75 L 40 75 Z" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+                <line x1="180" y1="145" x2="360" y2="145" stroke="#334155" stroke-width="2.5"/>
+                <text x="105" y="115" font-size="14" font-weight="600" fill="#475569" text-anchor="middle">Cliff</text>
+                <text x="290" y="140" font-size="12" fill="#64748b" text-anchor="middle">Ground</text>
+                
+                <path d="M 180 75 Q 180 25 195 25 Q 210 25 210 75 L 212 142" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                <circle cx="180" cy="75" r="5" fill="#2563eb"/>
+                <text x="168" y="70" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">A</text>
+                <circle cx="210" cy="75" r="5" fill="#2563eb"/>
+                <text x="224" y="72" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">B</text>
+                <circle cx="212" cy="142" r="5" fill="#dc2626"/>
+            </svg>
+        `,
+        cliff_thrown_down: `
+            <svg viewBox="0 0 400 150">
+                <path d="M 50 140 L 180 140 L 180 45 L 50 45 Z" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+                <line x1="180" y1="140" x2="350" y2="140" stroke="#334155" stroke-width="2.5"/>
+                <text x="110" y="98" font-size="14" font-weight="600" fill="#475569" text-anchor="middle">Cliff</text>
+                <circle cx="180" cy="45" r="5" fill="#ea580c"/>
+                <line x1="180" y1="53" x2="180" y2="78" stroke="#ea580c" stroke-width="2.5"/>
+                <polygon points="180,84 176,75 184,75" fill="#ea580c"/>
+                <line x1="180" y1="88" x2="180" y2="134" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                <circle cx="180" cy="138" r="5" fill="#dc2626"/>
+            </svg>
+        `,
+        vacuum_drop: `
+            <svg viewBox="0 0 400 150">
+                <rect x="60" y="15" width="280" height="120" rx="8" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+                <text x="200" y="38" text-anchor="middle" font-size="13" font-weight="600" fill="#0284c7">Vacuum Chamber (No Air Resistance)</text>
+                <circle cx="130" cy="65" r="13" fill="#1e293b"/>
+                <text x="130" y="96" text-anchor="middle" font-size="12" font-weight="600" fill="#1e293b">10 kg Sphere</text>
+                <line x1="130" y1="103" x2="130" y2="124" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+                <path d="M 270 52 C 262 60, 278 72, 266 82 C 274 77, 282 64, 270 52 Z" fill="#94a3b8"/>
+                <text x="270" y="96" text-anchor="middle" font-size="12" font-weight="600" fill="#475569">0.001 kg Feather</text>
+                <line x1="270" y1="103" x2="270" y2="124" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,3"/>
+            </svg>
+        `
+    };
+
+    // Bank of 35 targeted questions categorized across 8 distinct topics
+    const questionBank = [
+        // --- TOPIC: apex ---
+        {
+            topic: "apex",
+            text: "A tennis ball is hit straight up into the air. At its highest point (the apex), what is its instantaneous acceleration $\\vec{a}$?",
+            diagram: "apex_zoom",
+            options: [
+                { text: "$\\vec{a} = -9.81\\text{ m/s}^2$", correct: true, trap: "" },
+                { text: "$\\vec{a} = 0\\text{ m/s}^2$", correct: false, trap: "Common Trap! Velocity is zero at the apex, but acceleration is not. If acceleration were zero, the ball would remain suspended in mid-air!" },
+                { text: "$\\vec{a} = +9.81\\text{ m/s}^2$", correct: false, trap: "Gravity constantly pulls downward toward the center of the Earth." }
+            ],
+            explanation: "At the peak, velocity is momentarily $0\\text{ m/s}$, but gravity continues pulling downward constantly at $\\vec{a} = -9.81\\text{ m/s}^2$."
+        },
+        {
+            topic: "apex",
+            text: "A ball is thrown straight up from Point A. At the very top of its trajectory (Point B), what is its instantaneous velocity $\\vec{v}$?",
+            diagram: "toss_apex",
+            options: [
+                { text: "$\\vec{v} = 0\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v} = -9.81\\text{ m/s}$", correct: false, trap: "$-9.81\\text{ m/s}^2$ is acceleration, not velocity!" },
+                { text: "$\\vec{v} = +9.81\\text{ m/s}$", correct: false, trap: "The ball has stopped rising and has not started falling yet; its instantaneous velocity is zero." }
+            ],
+            explanation: "At the highest point (apex), the ball pauses for a single instant to change direction: $\\vec{v} = 0\\text{ m/s}$."
+        },
+        {
+            topic: "apex",
+            text: "At the peak of flight for a ball thrown upward off a cliff, what is true about velocity and acceleration?",
+            diagram: "cliff_up_down",
+            options: [
+                { text: "$\\vec{v} = 0\\text{ m/s}$, while $\\vec{a} = -9.81\\text{ m/s}^2$", correct: true, trap: "" },
+                { text: "$\\vec{v} = 0\\text{ m/s}$ and $\\vec{a} = 0\\text{ m/s}^2$", correct: false, trap: "Trap: If both were zero, the ball would never accelerate back down." },
+                { text: "$\\vec{v} = -9.81\\text{ m/s}$, while $\\vec{a} = 0\\text{ m/s}^2$", correct: false, trap: "Confusing velocity units with acceleration units." }
+            ],
+            explanation: "Velocity reaches zero at the turnaround point, but acceleration remains constant at $\\vec{a} = -9.81\\text{ m/s}^2$."
+        },
+
+        // --- TOPIC: constant_accel ---
+        {
+            topic: "constant_accel",
+            text: "While the ball is rising from Point A to Point B, what is the acceleration $\\vec{a}$ of the ball?",
+            diagram: "toss_rising",
+            options: [
+                { text: "$\\vec{a} = -9.81\\text{ m/s}^2$", correct: true, trap: "" },
+                { text: "$\\vec{a} = +9.81\\text{ m/s}^2$", correct: false, trap: "Trap: Acceleration does not match the direction of velocity here. Moving upward while slowing down requires downward acceleration." },
+                { text: "Gradually decreasing toward 0", correct: false, trap: "Trap: Speed decreases, but the acceleration of gravity remains completely constant." }
+            ],
+            explanation: "Near Earth's surface, gravitational acceleration is always constant at $\\vec{a} = -9.81\\text{ m/s}^2$ directed downward, regardless of which way the object travels."
+        },
+        {
+            topic: "constant_accel",
+            text: "While the ball is falling downward from Point A toward Point B, its acceleration $\\vec{a}$ is:",
+            diagram: "toss_falling",
+            options: [
+                { text: "$\\vec{a} = -9.81\\text{ m/s}^2$", correct: true, trap: "" },
+                { text: "$\\vec{a} = +9.81\\text{ m/s}^2$", correct: false, trap: "Downward is defined as the negative direction." },
+                { text: "Increasing as it gains speed", correct: false, trap: "Trap: Speed is increasing, but the rate of change of speed (acceleration) stays fixed at $-9.81\\text{ m/s}^2$." }
+            ],
+            explanation: "Acceleration does not change magnitude during free fall; it stays fixed at $\\vec{a} = -9.81\\text{ m/s}^2$ throughout the entire journey."
+        },
+        {
+            topic: "constant_accel",
+            text: "What happens to the acceleration vector $\\vec{a}$ of an object as it rises, stops at the peak, and falls back down?",
+            diagram: "toss_loop",
+            options: [
+                { text: "Remains constant at $-9.81\\text{ m/s}^2$", correct: true, trap: "" },
+                { text: "Flips direction at the highest point", correct: false, trap: "Trap: Velocity flips direction, but gravity constantly pulls downward." },
+                { text: "Decreases to zero at the peak, then grows", correct: false, trap: "Trap: Velocity reaches zero, but acceleration never changes." }
+            ],
+            explanation: "Earth's gravitational pull does not switch directions. Acceleration is constantly $\\vec{a} = -9.81\\text{ m/s}^2$."
+        },
+        {
+            topic: "constant_accel",
+            text: "If an object is thrown upward at $+25\\text{ m/s}$, what is its velocity change during each second of flight?",
+            diagram: "toss_loop",
+            options: [
+                { text: "Changes by $-9.81\\text{ m/s}$ each second", correct: true, trap: "" },
+                { text: "Changes by $+9.81\\text{ m/s}$ each second", correct: false, trap: "Downward acceleration reduces upward velocity each second." },
+                { text: "$0\\text{ m/s}$ each second", correct: false, trap: "Constant acceleration means a constant rate of velocity change, not constant velocity." }
+            ],
+            explanation: "Acceleration is the rate of velocity change: $\\vec{a} = -9.81\\text{ m/s}^2 = -9.81\\text{ (m/s) per second}$."
+        },
+        {
+            topic: "constant_accel",
+            text: "A coin is thrown upward from a cliff. While rising from the cliff toward its peak, its acceleration is:",
+            diagram: "cliff_up_down",
+            options: [
+                { text: "$\\vec{a} = -9.81\\text{ m/s}^2$", correct: true, trap: "" },
+                { text: "$\\vec{a} = +9.81\\text{ m/s}^2$", correct: false, trap: "Gravity always pulls downward toward the center of the Earth." },
+                { text: "$\\vec{a} = 0\\text{ m/s}^2$ until it starts falling", correct: false, trap: "If acceleration were zero while rising, the coin would never slow down or turn around!" }
+            ],
+            explanation: "Gravitational acceleration is consistently $\\vec{a} = -9.81\\text{ m/s}^2$ at all stages of flight."
+        },
+        {
+            topic: "constant_accel",
+            text: "A ball is tossed straight up and caught at the same height. At which point during its flight is its acceleration the greatest?",
+            diagram: "toss_loop",
+            options: [
+                { text: "Acceleration is identical ($-9.81\\text{ m/s}^2$) at all points", correct: true, trap: "" },
+                { text: "At the moment of release", correct: false, trap: "Trap: Velocity is highest at release, but acceleration is constant." },
+                { text: "At the highest peak", correct: false, trap: "Acceleration is not greater at the peak; it is $-9.81\\text{ m/s}^2$ everywhere." }
+            ],
+            explanation: "Under uniform gravity (ignoring air drag), acceleration is strictly constant at $\\vec{a} = -9.81\\text{ m/s}^2$ throughout every fraction of a second of flight."
+        },
+
+        // --- TOPIC: symmetry ---
+        {
+            topic: "symmetry",
+            text: "A ball is launched upward from ground level at $+18\\text{ m/s}$ (Point A). What is its velocity when it hits the ground (Point B)?",
+            diagram: "toss_launch_land",
+            options: [
+                { text: "$\\vec{v}_2 = -18\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v}_2 = 0\\text{ m/s}$", correct: false, trap: "Classic Trap! In physics problems, 'when it hits the ground' refers to the impact velocity before stopping, not after it sits at rest." },
+                { text: "$\\vec{v}_2 = +18\\text{ m/s}$", correct: false, trap: "The ball is moving downward upon landing, so velocity must be negative." }
+            ],
+            explanation: "In symmetrical free fall (same launch and landing elevation), the velocity when it hits the ground equals the launch speed but directed downward: $\\vec{v}_2 = -18\\text{ m/s}$."
+        },
+        {
+            topic: "symmetry",
+            text: "A rock passes Point A on the way up at $+11\\text{ m/s}$. What is its velocity at Point B (same elevation, on the way down)?",
+            diagram: "toss_symmetry",
+            options: [
+                { text: "$\\vec{v} = -11\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v} = +11\\text{ m/s}$", correct: false, trap: "At Point B the rock is descending, which means velocity has a negative sign." },
+                { text: "$\\vec{v} = 0\\text{ m/s}$", correct: false, trap: "Velocity is only zero at the apex." }
+            ],
+            explanation: "Due to conservation of energy and uniform acceleration, speed going up equals speed going down at equal heights: $\\vec{v}_{\\text{down}} = -\\vec{v}_{\\text{up}}$."
+        },
+        {
+            topic: "symmetry",
+            text: "How does the time spent rising compare to the time spent falling back to the launch height?",
+            diagram: "toss_loop",
+            options: [
+                { text: "$t_{\\text{rise}} = t_{\\text{fall}}$", correct: true, trap: "" },
+                { text: "$t_{\\text{fall}} > t_{\\text{rise}}$", correct: false, trap: "Trap: Acceleration is identical on both the upward and downward portions of the flight." },
+                { text: "$t_{\\text{rise}} > t_{\\text{fall}}$", correct: false, trap: "Without air resistance, the flight is completely time-symmetric." }
+            ],
+            explanation: "Because acceleration is uniform ($-9.81\\text{ m/s}^2$) and vertical displacement is symmetric, time to reach the top equals time to return to launch height."
+        },
+        {
+            topic: "symmetry",
+            text: "A juggler catches a ball at the exact same height from which she tossed it (Point A to Point B). What is the displacement?",
+            diagram: "toss_launch_land",
+            options: [
+                { text: "$\\vec{d} = 0\\text{ m}$", correct: true, trap: "" },
+                { text: "$\\vec{d} > 0\\text{ m}$", correct: false, trap: "Displacement is change in position. Since final position equals initial position, displacement is zero." },
+                { text: "$\\vec{d} < 0\\text{ m}$", correct: false, trap: "Displacement depends solely on start and end points, not the total path traveled." }
+            ],
+            explanation: "Displacement is vector position change. Catching it at the launch height means $\\vec{d} = 0\\text{ m}$ (even though the scalar distance traveled $> 0$)."
+        },
+        {
+            topic: "symmetry",
+            text: "A ball is thrown upward from a cliff (Point A) at $+12\\text{ m/s}$. What is its velocity when it falls back to cliff level (Point B)?",
+            diagram: "cliff_up_down",
+            options: [
+                { text: "$\\vec{v} = -12\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v} = 0\\text{ m/s}$", correct: false, trap: "It was zero at the apex, but it has accelerated downward since then!" },
+                { text: "$\\vec{v} = -30\\text{ m/s}$", correct: false, trap: "Do not confuse height with velocity." }
+            ],
+            explanation: "At the exact same elevation as the launch point, symmetrical flight dictates that $\\vec{v} = -\\vec{v}_1 = -12\\text{ m/s}$."
+        },
+
+        // --- TOPIC: vector_signs ---
+        {
+            topic: "vector_signs",
+            text: "As a ball moves upward from Point A to Point B, the signs of its velocity and acceleration are:",
+            diagram: "toss_rising",
+            options: [
+                { text: "Velocity is $(+)$, Acceleration is $(-)$", correct: true, trap: "" },
+                { text: "Both are $(+)$", correct: false, trap: "If both were positive, the ball would speed up as it climbed into the air!" },
+                { text: "Velocity is $(-)$, Acceleration is $(+)$", correct: false, trap: "Upward motion means positive velocity." }
+            ],
+            explanation: "The ball moves upward ($\\vec{v} > 0$) but slows down because gravity points downward ($\\vec{a} < 0$). Opposite signs indicate slowing down."
+        },
+        {
+            topic: "vector_signs",
+            text: "As a ball falls downward from Point A to Point B, the signs of its velocity and acceleration are:",
+            diagram: "toss_falling",
+            options: [
+                { text: "Both velocity and acceleration are $(-)$", correct: true, trap: "" },
+                { text: "Velocity is $(-)$, Acceleration is $(+)$", correct: false, trap: "If acceleration were positive, downward motion would slow down." },
+                { text: "Both are $(+)$", correct: false, trap: "Both vectors point downward." }
+            ],
+            explanation: "The ball moves downward ($\\vec{v} < 0$) and speeds up because acceleration is also downward ($\\vec{a} < 0$). Matching signs indicate speeding up."
+        },
+        {
+            topic: "vector_signs",
+            text: "What does a negative velocity indicate about an object?",
+            diagram: "downward_motion",
+            options: [
+                { text: "The object is currently moving downward", correct: true, trap: "" },
+                { text: "The object is slowing down", correct: false, trap: "Trap: A negative velocity object can be speeding up (e.g., accelerating from $-5\\text{ m/s}$ to $-15\\text{ m/s}$)." },
+                { text: "The object is located below ground level", correct: false, trap: "Negative position means below ground. Negative velocity means moving downward." }
+            ],
+            explanation: "The sign of velocity indicates the direction of motion: $(+)$ is upward, and $(-)$ is downward."
+        },
+
+        // --- TOPIC: cliff_drop ---
+        {
+            topic: "cliff_drop",
+            text: "A physics problem states: 'A pebble is DROPPED from a 45-meter cliff.' What is the pebble's initial velocity?",
+            diagram: "cliff_drop",
+            options: [
+                { text: "$\\vec{v}_1 = 0\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v}_1 = -9.81\\text{ m/s}$", correct: false, trap: "Trap: $-9.81\\text{ m/s}^2$ is acceleration, not initial velocity!" },
+                { text: "$\\vec{v}_1 = -45\\text{ m/s}$", correct: false, trap: "$45\\text{ m}$ is the height/distance, not the initial launch velocity." }
+            ],
+            explanation: "In physics problems, 'dropped' or 'released from rest' indicates $\\vec{v}_1 = 0\\text{ m/s}$."
+        },
+        {
+            topic: "cliff_drop",
+            text: "A heavy wrench is dropped from a cliff 60 meters high. What is its displacement when it reaches the ground?",
+            diagram: "cliff_drop",
+            options: [
+                { text: "$\\vec{d} = -60\\text{ m}$", correct: true, trap: "" },
+                { text: "$\\vec{d} = +60\\text{ m}$", correct: false, trap: "Trap: Conflating distance (scalar, $60\\text{ m}$) with displacement (vector). Since it ended lower than it started, displacement is negative." },
+                { text: "$\\vec{d} = 0\\text{ m}$", correct: false, trap: "The wrench did not return to its starting position." }
+            ],
+            explanation: "Displacement $\\vec{d} = y_2 - y_1 = 0\\text{ m} - 60\\text{ m} = -60\\text{ m}$. Falling downwards always results in a negative displacement."
+        },
+        {
+            topic: "cliff_drop",
+            text: "An iron bolt is dropped from rest. What is its velocity after falling for exactly $1.0\\text{ second}$?",
+            diagram: "cliff_drop",
+            options: [
+                { text: "$\\vec{v}_2 = -9.81\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v}_2 = 0\\text{ m/s}$", correct: false, trap: "It was at rest at $t = 0\\text{ s}$, but gravity accelerated it downward for 1 full second." },
+                { text: "$\\vec{v}_2 = +9.81\\text{ m/s}$", correct: false, trap: "The bolt is falling downward, so velocity must be negative." }
+            ],
+            explanation: "$\\vec{v}_2 = \\vec{v}_1 + \\vec{a}t = 0 + (-9.81\\text{ m/s}^2)(1.0\\text{ s}) = -9.81\\text{ m/s}$."
+        },
+        {
+            topic: "cliff_drop",
+            text: "An iron bolt is dropped from rest. What is its velocity after falling for exactly $2.0\\text{ seconds}$?",
+            diagram: "cliff_drop",
+            options: [
+                { text: "$\\vec{v}_2 = -19.62\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v}_2 = -9.81\\text{ m/s}$", correct: false, trap: "$-9.81\\text{ m/s}$ was its velocity after 1 second. It keeps speeding up!" },
+                { text: "$\\vec{v}_2 = -4.90\\text{ m/s}$", correct: false, trap: "$-4.9\\text{ m}$ is the displacement after 1 second, not velocity after 2 seconds." }
+            ],
+            explanation: "$\\vec{v}_2 = \\vec{v}_1 + \\vec{a}t = 0 + (-9.81\\text{ m/s}^2)(2.0\\text{ s}) = -19.62\\text{ m/s}$."
+        },
+        {
+            topic: "cliff_drop",
+            text: "When an object hits the ground, why is it incorrect to set final velocity $\\vec{v}_2 = 0\\text{ m/s}$ in kinematic equations?",
+            diagram: "cliff_drop",
+            options: [
+                { text: "$\\vec{v}_2$ represents the velocity an instant before ground contact", correct: true, trap: "" },
+                { text: "Because acceleration becomes zero upon impact", correct: false, trap: "During impact, the ground exerts a massive upward acceleration to stop the ball." },
+                { text: "Because velocity cannot be negative", correct: false, trap: "Velocity is negative whenever an object travels downward." }
+            ],
+            explanation: "Free fall formulas apply only while gravity is the sole force acting on the object. Free fall ends the instant contact occurs."
+        },
+        {
+            topic: "cliff_drop",
+            text: "As an object dropped from rest falls down a cliff, how do its speed and acceleration change (ignoring air resistance)?",
+            diagram: "cliff_drop",
+            options: [
+                { text: "Speed increases; Acceleration remains constant", correct: true, trap: "" },
+                { text: "Both speed and acceleration increase", correct: false, trap: "Trap: Acceleration does not grow as things fall faster; it stays constant at $-9.81\\text{ m/s}^2$." },
+                { text: "Speed increases; Acceleration decreases", correct: false, trap: "Acceleration does not decrease unless significant air drag builds up." }
+            ],
+            explanation: "Acceleration is constant at $\\vec{a} = -9.81\\text{ m/s}^2$. A constant acceleration continuously increases downward speed."
+        },
+
+        // --- TOPIC: cliff_toss ---
+        {
+            topic: "cliff_toss",
+            text: "A rock is thrown upward at $+15\\text{ m/s}$ from the edge of a $40\\text{ m}$ cliff and lands in the valley below. What is the displacement?",
+            diagram: "cliff_up_down",
+            options: [
+                { text: "$\\vec{d} = -40\\text{ m}$", correct: true, trap: "" },
+                { text: "$\\vec{d} = +40\\text{ m}$", correct: false, trap: "Final position is below initial position, so displacement is negative." },
+                { text: "$\\vec{d} = -55\\text{ m}$", correct: false, trap: "Trap: Do not add the peak height to displacement! Displacement depends only on (final position - initial position)." }
+            ],
+            explanation: "Displacement $\\vec{d} = y_2 - y_1 = 0 - 40 = -40\\text{ m}$. The extra distance traveled above the cliff cancels out on the way back down."
+        },
+        {
+            topic: "cliff_toss",
+            text: "A rock is thrown upward from a cliff and lands in the valley below. How does the total distance compare to the displacement?",
+            diagram: "cliff_up_down",
+            options: [
+                { text: "Total distance > displacement", correct: true, trap: "" },
+                { text: "Total distance = displacement", correct: false, trap: "They are only equal if motion is in a straight line without reversing direction." },
+                { text: "Total distance < displacement", correct: false, trap: "Distance can never be smaller than displacement." }
+            ],
+            explanation: "Distance measures the total path length traveled (up + down), whereas displacement only measures the straight-line change from start to finish."
+        },
+        {
+            topic: "cliff_toss",
+            text: "A ball is thrown up at $+10\\text{ m/s}$ from a cliff. How will its speed when it hits the valley floor compare to $10\\text{ m/s}$?",
+            diagram: "cliff_up_down",
+            options: [
+                { text: "Speed > 10 m/s", correct: true, trap: "" },
+                { text: "Speed = 10 m/s", correct: false, trap: "It was $10\\text{ m/s}$ when passing the cliff edge; gravity continues speeding it up as it falls toward the valley!" },
+                { text: "Speed < 10 m/s", correct: false, trap: "It accelerates downward all the way to the valley floor." }
+            ],
+            explanation: "When falling past the cliff edge, speed is $10\\text{ m/s}$. Gravity continues accelerating it downward, so speed when it hits the valley floor exceeds $10\\text{ m/s}$."
+        },
+
+        // --- TOPIC: downward_throw ---
+        {
+            topic: "downward_throw",
+            text: "A student forcefully throws a ball DOWNWARD toward the pavement at $8\\text{ m/s}$. What is the initial velocity?",
+            diagram: "cliff_thrown_down",
+            options: [
+                { text: "$\\vec{v}_1 = -8\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v}_1 = +8\\text{ m/s}$", correct: false, trap: "Upward is positive. Since the ball was thrown downward, initial velocity must be negative." },
+                { text: "$\\vec{v}_1 = 0\\text{ m/s}$", correct: false, trap: "0 m/s is for dropped objects, not objects thrown with an initial speed." }
+            ],
+            explanation: "Because initial motion is directed downward, initial velocity is negative: $\\vec{v}_1 = -8\\text{ m/s}$."
+        },
+        {
+            topic: "downward_throw",
+            text: "Ball 1 is dropped from rest. Ball 2 is thrown downward with $\\vec{v}_1 = -10\\text{ m/s}$. While falling, the acceleration of Ball 2 is:",
+            diagram: "cliff_thrown_down",
+            options: [
+                { text: "Equal to Ball 1 ($-9.81\\text{ m/s}^2$)", correct: true, trap: "" },
+                { text: "More negative than Ball 1", correct: false, trap: "Trap: Students confuse initial speed with acceleration. Once released, ONLY gravity acts on both!" },
+                { text: "Dependent on how hard the hand threw it", correct: false, trap: "Once the ball leaves the hand, the hand applies zero force. Only gravity accelerates it." }
+            ],
+            explanation: "Both balls are in free fall after release. Both experience the exact same acceleration: $\\vec{a} = -9.81\\text{ m/s}^2$."
+        },
+        {
+            topic: "downward_throw",
+            text: "Ball 1 is dropped from rest. Ball 2 is thrown downward at $-12\\text{ m/s}$ simultaneously from the same height. Which hits the ground first?",
+            diagram: "cliff_thrown_down",
+            options: [
+                { text: "Ball 2 (thrown downward)", correct: true, trap: "" },
+                { text: "Ball 1 (dropped)", correct: false, trap: "Ball 1 starts at zero speed, whereas Ball 2 starts with a downward head-start in speed." },
+                { text: "They land at the exact same time", correct: false, trap: "Trap: They have the same acceleration, but Ball 2 has a greater average downward speed." }
+            ],
+            explanation: "Ball 2 has a non-zero downward initial speed, meaning its average speed is higher, allowing it to cover displacement in less time."
+        },
+        {
+            topic: "downward_throw",
+            text: "A stone is thrown downward with $\\vec{v}_1 = -5\\text{ m/s}$. After $1.0\\text{ second}$ of free fall, its velocity is:",
+            diagram: "cliff_thrown_down",
+            options: [
+                { text: "$\\vec{v}_2 = -14.81\\text{ m/s}$", correct: true, trap: "" },
+                { text: "$\\vec{v}_2 = -9.81\\text{ m/s}$", correct: false, trap: "Trap: $-9.81\\text{ m/s}$ would be the velocity if it were dropped from rest." },
+                { text: "$\\vec{v}_2 = -4.81\\text{ m/s}$", correct: false, trap: "Gravity speeds up downward motion, making it more negative, not less." }
+            ],
+            explanation: "$\\vec{v}_2 = \\vec{v}_1 + \\vec{a}t = -5 + (-9.81)(1.0) = -14.81\\text{ m/s}$."
+        },
+        {
+            topic: "downward_throw",
+            text: "Once a ball thrown downward leaves your hand, what forces act on it (ignoring air resistance)?",
+            diagram: "cliff_thrown_down",
+            options: [
+                { text: "Only gravity pulling downward", correct: true, trap: "" },
+                { text: "Gravity plus the continuing force of the throw", correct: false, trap: "Trap: The 'force of the throw' does not travel with the ball. Contact ended when it left the hand." },
+                { text: "An increasing downward force as speed builds", correct: false, trap: "The gravitational force (weight) remains constant near Earth's surface." }
+            ],
+            explanation: "The throw only imparts initial velocity. Once detached from the hand, only gravity acts (definition of free fall)."
+        },
+
+        // --- TOPIC: mass_gravity ---
+        {
+            topic: "mass_gravity",
+            text: "In an evacuated vacuum chamber (zero air resistance), a $10\\text{ kg}$ sphere and a $0.001\\text{ kg}$ feather are dropped simultaneously from rest. Which lands first?",
+            diagram: "vacuum_drop",
+            options: [
+                { text: "Both hit at the exact same time", correct: true, trap: "" },
+                { text: "The $10\\text{ kg}$ sphere", correct: false, trap: "Aristotelian Misconception: Heavier objects do not fall faster in a vacuum; all objects share the same acceleration." },
+                { text: "The feather", correct: false, trap: "Feathers have no aerodynamic advantage in a vacuum." }
+            ],
+            explanation: "In a vacuum, acceleration depends only on gravity ($\\vec{a} = -9.81\\text{ m/s}^2$), completely independent of the object's mass."
+        },
+        {
+            topic: "mass_gravity",
+            text: "Why does a flat sheet of paper fall slower than a crumpled ball of paper in a normal classroom?",
+            diagram: "vacuum_drop",
+            options: [
+                { text: "Air resistance exerts a larger upward drag on the flat sheet", correct: true, trap: "" },
+                { text: "Gravity pulls with less acceleration on flat objects", correct: false, trap: "Trap: Gravity acts equally on both masses." },
+                { text: "Crumpled paper has more mass", correct: false, trap: "Both sheets have identical mass; only surface area changed." }
+            ],
+            explanation: "Air resistance opposes motion. The flat sheet has a large surface area creating substantial upward drag, whereas free fall assumes air drag is negligible."
+        },
+        {
+            topic: "mass_gravity",
+            text: "A $50\\text{ kg}$ metal weight and a $5\\text{ kg}$ metal weight are dropped from a tower. In the absence of air drag, their accelerations are:",
+            diagram: "vacuum_drop",
+            options: [
+                { text: "Identical ($-9.81\\text{ m/s}^2$ for both)", correct: true, trap: "" },
+                { text: "$10\\times$ greater for the $50\\text{ kg}$ weight", correct: false, trap: "Trap: The gravitational force is 10x greater, but because it has 10x more inertia, acceleration is identical!" },
+                { text: "Greater for the $5\\text{ kg}$ weight because it has less inertia", correct: false, trap: "The smaller inertia is countered by a proportionally smaller gravitational force." }
+            ],
+            explanation: "$\\vec{a} = \\vec{F}_{\\text{net}} / m = (m\\vec{g}) / m = \\vec{g} = -9.81\\text{ m/s}^2$. Mass cancels out completely."
+        },
+        {
+            topic: "mass_gravity",
+            text: "An astronaut drops a hammer and a feather on the airless Moon. What happens?",
+            diagram: "vacuum_drop",
+            options: [
+                { text: "Both hit the surface at the exact same instant", correct: true, trap: "" },
+                { text: "The hammer hits first because it has greater mass", correct: false, trap: "Apollo 15 astronaut David Scott demonstrated live that without air, both land together." },
+                { text: "The feather floats away into space", correct: false, trap: "The Moon has gravity; objects fall downward on the Moon." }
+            ],
+            explanation: "Without atmospheric drag, all objects accelerate at the local gravitational rate regardless of mass or shape."
+        }
+    ];
+
+    let shuffledQuestions = [];
+    let currentIndex = 0;
+    let correctTotal = 0;
+    let incorrectTotal = 0;
+    const TARGET_CORRECT = 10;
+    let currentShuffledOptions = [];
+
+    function generateId() {
+        const now = new Date();
+        const yearDigit = String(now.getFullYear()).slice(-1);
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const randomDigits = String(Math.floor(1000 + Math.random() * 9000));
+        return `${yearDigit}${month}${day}${randomDigits}`;
+    }
+
+    function shuffleArray(array) {
+        let arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    // Intelligent shuffle to prevent concept clumping
+    function smartShuffleQuestions(bank) {
+        const topics = {};
+        bank.forEach(q => {
+            if (!topics[q.topic]) topics[q.topic] = [];
+            topics[q.topic].push(q);
+        });
+
+        Object.keys(topics).forEach(t => {
+            topics[t] = shuffleArray(topics[t]);
+        });
+
+        const topicKeys = Object.keys(topics);
+        const result = [];
+        let lastTopic = null;
+        let remaining = bank.length;
+
+        while (remaining > 0) {
+            const availableTopics = shuffleArray(topicKeys.filter(t => topics[t].length > 0));
+            let pickedInCycle = false;
+
+            for (const t of availableTopics) {
+                if (t !== lastTopic && topics[t].length > 0) {
+                    result.push(topics[t].pop());
+                    lastTopic = t;
+                    remaining--;
+                    pickedInCycle = true;
+                    break;
+                }
+            }
+
+            if (!pickedInCycle) {
+                for (const t of availableTopics) {
+                    if (topics[t].length > 0) {
+                        result.push(topics[t].pop());
+                        lastTopic = t;
+                        remaining--;
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    function initQuiz() {
+        // Rebuild container structure cleanly
+        const card = document.getElementById("display-card");
+        card.innerHTML = `
+            <span class="id-badge">ID: <span id="sim-id">${generateId()}</span></span>
+            <div class="diagram-wrapper" id="svg-diagram"></div>
+            <div id="statement-display" class="statement-text">Loading problem...</div>
+        `;
+
+        shuffledQuestions = smartShuffleQuestions(questionBank);
+        currentIndex = 0;
+        correctTotal = 0;
+        incorrectTotal = 0;
+        document.getElementById("correct-count").innerText = "0";
+        document.getElementById("incorrect-count").innerText = "0";
+        
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.onclick = loadNextStatement;
+
+        document.getElementById("instruction").style.display = "block";
+        document.getElementById("progress-display").style.display = "block";
+        displayCurrentStatement();
+    }
+
+    function displayCurrentStatement() {
+        const q = shuffledQuestions[currentIndex];
+        
+        // Render SVG Diagram
+        document.getElementById("svg-diagram").innerHTML = diagrams[q.diagram] || "";
+        document.getElementById("statement-display").innerText = q.text;
+
+        // Shuffle options for current question
+        currentShuffledOptions = shuffleArray(q.options);
+
+        // Populate the 3 buttons
+        for (let i = 0; i < 3; i++) {
+            const btn = document.getElementById(`opt-btn-${i}`);
+            btn.innerHTML = currentShuffledOptions[i].text;
+            btn.style.display = "inline-block";
+        }
+
+        document.getElementById("feedback").style.display = "none";
+        document.getElementById("instruction").style.display = "block";
+        document.getElementById("action-buttons").style.display = "flex";
+        document.getElementById("next-btn").style.display = "none";
+
+        renderMath();
+    }
+
+    function submitAnswer(chosenIndex) {
+        const q = shuffledQuestions[currentIndex];
+        const chosen = currentShuffledOptions[chosenIndex];
+        const feedbackEl = document.getElementById("feedback");
+        const instructionEl = document.getElementById("instruction");
+        const actionBtns = document.getElementById("action-buttons");
+        const nextBtn = document.getElementById("next-btn");
+
+        instructionEl.style.display = "none";
+        actionBtns.style.display = "none";
+
+        if (chosen.correct) {
+            correctTotal++;
+            document.getElementById("correct-count").innerText = correctTotal;
+            feedbackEl.className = "feedback-banner fb-correct";
+            feedbackEl.innerHTML = `<strong>Correct!</strong><br>${q.explanation}`;
+        } else {
+            incorrectTotal++;
+            document.getElementById("incorrect-count").innerText = incorrectTotal;
+            feedbackEl.className = "feedback-banner fb-incorrect";
+            feedbackEl.innerHTML = `<strong>Incorrect.</strong><br>${chosen.trap ? `<strong>Misconception Alert:</strong> ${chosen.trap}<br><br>` : ""}<strong>Correct Concept:</strong> ${q.explanation}`;
+        }
+
+        feedbackEl.style.display = "block";
+
+        if (correctTotal >= TARGET_CORRECT) {
+            nextBtn.innerText = "View Final Mastery Proof 🏆";
+        } else {
+            nextBtn.innerText = "Next Question ➔";
+        }
+        nextBtn.style.display = "block";
+
+        renderMath();
+    }
+
+    function loadNextStatement() {
+        if (correctTotal >= TARGET_CORRECT) {
+            showCompletionScreen();
+            return;
+        }
+
+        currentIndex++;
+        if (currentIndex >= shuffledQuestions.length) {
+            shuffledQuestions = smartShuffleQuestions(questionBank);
+            currentIndex = 0;
+        }
+        displayCurrentStatement();
+    }
+
+    function showCompletionScreen() {
+        document.getElementById("instruction").style.display = "none";
+        document.getElementById("feedback").style.display = "none";
+        document.getElementById("action-buttons").style.display = "none";
+        document.getElementById("progress-display").style.display = "none";
+        
+        const card = document.getElementById("display-card");
+        card.innerHTML = `
+            <span class="id-badge">ID: <span id="sim-id">${generateId()}</span></span>
+            <div class="completion-box">
+                <div class="completion-title">🎉 Free Fall Mastery Achieved!</div>
+                <p>You have mastered 1D free fall concepts, vector signs, and kinematic scenarios.</p>
+                <div style="font-size: 1.15em; margin: 16px 0;">
+                    <div>Target Score: <strong>10 Correct</strong></div>
+                    <div>Total Attempts: <strong>${correctTotal + incorrectTotal}</strong></div>
+                    <div>Accuracy: <strong>${Math.round((correctTotal / (correctTotal + incorrectTotal)) * 100)}%</strong></div>
+                </div>
+                <p style="color: #64748b; font-size: 0.9em;">Click the button below to copy proof for submission.</p>
+            </div>
+        `;
+
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.innerText = "Practice Again 🔄";
+        nextBtn.style.display = "block";
+        nextBtn.onclick = function() {
+            initQuiz();
+        };
+    }
+
+    async function copyProofToClipboard() {
+        const copyBtn = document.getElementById('copy-btn');
+        const originalText = copyBtn.innerText;
+        copyBtn.innerText = "⏳ Capturing proof...";
+        copyBtn.disabled = true;
+
+        try {
+            const simElement = document.getElementById('quiz-card');
+            const canvas = await html2canvas(simElement, {
+                backgroundColor: "#ffffff",
+                scale: 2
+            });
+            
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    alert("Could not generate image. Please try again.");
+                    copyBtn.innerText = originalText;
+                    copyBtn.disabled = false;
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.write([
+                        new ClipboardItem({ 'image/png': blob })
+                    ]);
+                    copyBtn.innerText = "✅ Proof Copied to Clipboard!";
+                    setTimeout(() => {
+                        copyBtn.innerText = originalText;
+                        copyBtn.disabled = false;
+                    }, 2500);
+                } catch (err) {
+                    console.error('Clipboard write error:', err);
+                    alert('Clipboard write blocked by browser permissions. Take a screenshot (Win+Shift+S or Cmd+Shift+4).');
+                    copyBtn.innerText = originalText;
+                    copyBtn.disabled = false;
+                }
+            }, 'image/png');
+        } catch (error) {
+            console.error('html2canvas capture error:', error);
+            alert('Failed to capture proof.');
+            copyBtn.innerText = originalText;
+            copyBtn.disabled = false;
+        }
+    }
+
+    window.onload = function() {
+        initQuiz();
+    };
+</script>
+
+</body>
+</html>
